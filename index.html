@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classical Japanese Grammar Reference</title>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --bg: #f4f7f6;
+            --card-bg: #ffffff;
+            --text: #333333;
+            --border: #dee2e6;
+            --nav-bg: #2c3e50;
+            --highlight: #27ae60;
+        }
+
+        /* Dark Mode Variables */
+        body.dark-mode {
+            --primary: #ecf0f1;
+            --bg: #1a1a1a;
+            --card-bg: #2d2d2d;
+            --text: #e0e0e0;
+            --border: #444;
+            --nav-bg: #000000;
+        }
+
+        body { 
+            font-family: "MS Mincho", "Hiragino Mincho ProN", serif; 
+            padding-top: 80px; 
+            background: var(--bg); 
+            color: var(--text); 
+            margin: 0;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        nav {
+            position: fixed; top: 0; width: 100%;
+            background: var(--nav-bg); padding: 10px 0;
+            z-index: 1000; box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            display: flex; justify-content: center; align-items: center;
+        }
+
+        nav a { color: white; text-decoration: none; margin: 0 15px; font-weight: bold; font-size: 0.85em; }
+        
+        .dark-mode-btn {
+            background: #444; color: white; border: none; padding: 5px 12px;
+            border-radius: 20px; cursor: pointer; font-size: 0.8em; margin-left: 20px;
+        }
+
+        .container { 
+            max-width: 1500px; margin: 20px auto; background: var(--card-bg); 
+            padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
+        }
+
+        .acknowledgment {
+            text-align: center; font-style: italic; font-size: 0.9em;
+            color: #7f8c8d; margin-bottom: 20px;
+        }
+
+        h1 { text-align: center; color: var(--primary); margin-bottom: 5px; }
+
+        /* Master Search Styling */
+        .master-search-container {
+            text-align: center; margin: 30px 0; padding: 20px;
+            background: rgba(0,0,0,0.03); border-radius: 8px;
+        }
+        #masterSearch {
+            padding: 12px 20px; width: 60%; font-size: 1.1em;
+            border-radius: 25px; border: 2px solid var(--border);
+            background: var(--card-bg); color: var(--text);
+        }
+
+        .table-section { margin-bottom: 60px; }
+        h2 { border-left: 6px solid var(--highlight); padding-left: 15px; margin-bottom: 20px; }
+
+        /* DataTables Customization for Dark Mode */
+        .dataTables_wrapper .dataTables_length, .dataTables_wrapper .dataTables_filter, 
+        .dataTables_wrapper .dataTables_info, .dataTables_wrapper .dataTables_processing, 
+        .dataTables_wrapper .dataTables_paginate { color: var(--text) !important; }
+        table.dataTable { border-color: var(--border) !important; }
+        table.dataTable tbody tr { background-color: var(--card-bg) !important; color: var(--text) !important; }
+        .dataTables_filter { display: none; } /* Hide individual search boxes */
+    </style>
+</head>
+<body>
+
+<nav>
+    <a href="#verb-sec">VERBS</a>
+    <a href="#aux-sec">AUXILIARIES</a>
+    <a href="#adj-sec">ADJECTIVES</a>
+    <button class="dark-mode-btn" onclick="toggleDarkMode()">🌓 Toggle Dark Mode</button>
+</nav>
+
+<div class="container">
+    <h1>Koten Grammar Module</h1>
+    <div class="acknowledgment">
+        Based on data and structures from Haruo Shirane, <i>Classical Japanese: A Grammar</i>.
+    </div>
+
+    <div class="master-search-container">
+        <input type="text" id="masterSearch" placeholder="Master Search (e.g., 'MZ', 'Causative', or '蹴る')...">
+    </div>
+
+    <div id="verb-sec" class="table-section">
+        <h2 style="color: #27ae60;">Verbs (動詞)</h2>
+        <table id="verbTable" class="display" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Conjugation</th><th>Row</th><th>Verb</th><th>Stem</th>
+                    <th>MZ</th><th>RY</th><th>SS</th><th>RT</th><th>IZ</th><th>MR</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+
+    <div id="aux-sec" class="table-section">
+        <h2 style="color: #2980b9;">Auxiliary Verbs (助動詞)</h2>
+        <table id="auxTable" class="display" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Aux Verb</th><th>Functions</th><th>MZ</th><th>RY</th><th>SS</th>
+                    <th>RT</th><th>IZ</th><th>MR</th><th>Type</th><th>Follows</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+
+    <div id="adj-sec" class="table-section">
+        <h2 style="color: #e67e22;">Adjectives (形容詞)</h2>
+        <table id="adjTable" class="display" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Type</th><th>Example</th><th>Stem</th><th>MZ</th><th>RY</th>
+                    <th>SS</th><th>RT</th><th>IZ</th><th>MR</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+
+<script>
+// --- VERB DATA (Expanded) ---
+const VERB_DATA = `Conjugation	Row	verb	stem	MZ	RY	SS	RT	IZ	MR
+yodan	カ	書く	か	かか	かき	かく	かく	かけ	かけ
+yodan	ガ	泳ぐ	およ	およが	およぎ	およぐ	およぐ	およげ	およげ
+yodan	サ	移す	うつ	うつさ	うつし	うつす	うつす	うつせ	うつせ
+yodan	タ	打つ	う	うた	うち	うつ	うつ	うて	うて
+yodan	ハ	思ふ	おも	おもは	おもゐ	おもふ	おもふ	おもへ	おもへ
+yodan	バ	呼ぶ	よ	よば	よび	よぶ	よぶ	よべ	よべ
+yodan	マ	読む	よ	よま	よみ	よむ	よむ	よめ	よめ
+yodan	ラ	取る	と	とら	とり	とる	とる	とれ	とれ
+yodan	カ	歩く	あり	ありか	ありき	ありく	ありく	ありけ	ありけ
+yodan	カ	驚く	おどろ	おどろか	おどろき	おどろく	おどろく	おどろけ	おどろけ
+yodan	ハ	言ふ	い	いは	いひ	いふ	いふ	いへ	いへ
+yodan	カ	行く	ゆ	ゆか	ゆき	ゆく	ゆく	ゆけ	ゆけ
+yodan	カ	聞く	き	きか	きき	きく	きく	きけ	きけ
+yodan	ハ	逢ふ	あ	あは	あひ	あふ	あふ	あへ	あへ
+yodan	カ	飽く	あ	あか	あき	あく	あく	あけ	あけ
+yodan	タ	待つ	ま	また	まち	まつ	まつ	まて	まて
+yodan	タ	立つ	た	たた	たち	たつ	たつ	たて	たて
+yodan	バ	飛ぶ	と	とば	とび	とぶ	とぶ	とべ	とべ
+yodan	マ	頼む	たの	たのま	たのみ	たのむ	たのむ	たのめ	たのめ
+yodan	ラ	ののしる	ののし	ののしら	ののしり	ののしる	ののしる	ののしれ	ののしれ
+yodan	ハ	笑ふ	わら	わらは	わらひ	わらふ	わらふ	わらへ	わらへ
+yodan	カ	置く	お	おか	おき	おく	おく	おけ	おけ
+yodan	ハ	給ふ	たま	たまは	たまひ	たまふ	たまふ	たまへ	たまへ
+yodan	ガ	騒ぐ	さわ	さわが	さわぎ	さわぐ	さわぐ	さわげ	さわげ
+yodan	タ	かこつ	かこ	かこた	かこち	かこつ	かこつ	かこて	かこて
+yodan	マ	悩む	なや	なやま	なやみ	なやむ	なやむ	なやめ	なやめ
+yodan	マ	営む	いとな	いとなま	いとなみ	いとなむ	いとなむ	いとなめ	いとなめ
+yodan	カ	嘆く	なげ	なげか	なげき	なげく	なげく	なげけ	なげけ
+shimo-ichidan	カ	蹴る	け	け	け	ける	ける	けれ	け
+shimo-nidan	ア	得	う	え	え	う	うる	うれ	え
+shimo-nidan	カ	受く	う	うけ	うけ	うく	うくる	うくれ	うけ
+shimo-nidan	ガ	告ぐ	つ	つげ	つげ	つぐ	つぐる	つぐれ	つげ
+shimo-nidan	サ	寄す	よ	よせ	よせ	よす	よする	よすれ	よせ
+shimo-nidan	ザ	混ず	ま	まぜ	まぜ	まず	まずる	まずれ	まぜ
+shimo-nidan	タ	捨つ	す	すて	すて	すつ	すつる	すつれ	すて
+shimo-nidan	ダ	出づ	い	いで	いで	いづ	いづる	いづれ	いで
+shimo-nidan	ナ	尋ぬ	たづ	たづね	たづね	たづ	たづる	たづれ	たづね
+shimo-nidan	ハ	教ふ	をし	をしへ	をしへ	をしふ	をしふる	をしふれ	をしへ
+shimo-nidan	バ	述ぶ	の	のべ	のべ	のぶ	のぶる	のぶれ	のべ
+shimo-nidan	マ	求む	もと	もとめ	もとめ	もとむ	もとむる	もとむれ	もとめ
+shimo-nidan	ヤ	消ゆ	き	きえ	きえ	きゆ	きゆる	きゆれ	きえ
+shimo-nidan	ラ	流る	なが	ながれ	ながれ	ながる	ながるる	ながるれ	ながれ
+shimo-nidan	ワ	植う	う	うゑ	うゑ	うう	ううる	ううれ	うゑ
+shimo-nidan	ヤ	見ゆ	み	みえ	みえ	みゆ	みゆる	みゆれ	みえ
+shimo-nidan	ヤ	覚ゆ	おぼ	おぼえ	おぼえ	おぼゆ	おぼゆる	おぼゆれ	おぼえ
+shimo-nidan	ヤ	聞こゆ	きこ	きこえ	きこえ	きこゆ	きこゆる	きこゆれ	きこえ
+shimo-nidan	ハ	答ふ	いら	いらへ	いらへ	いらふ	いらふる	いらふれ	いらへ
+shimo-nidan	ラ	暮る	く	くれ	くれ	くる	くるる	くるれ	くれ
+shimo-nidan	ラ	慣る	な	なれ	なれ	なる	なるる	なるれ	なれ
+shimo-nidan	タ	果つ	は	はて	はて	はつ	はつる	はつれ	はて
+shimo-nidan	タ	当つ	あ	あて	あて	あつ	あつる	あつれ	あて
+shimo-nidan	サ	失す	う	うせ	うせ	うす	うする	うすれ	うせ
+shimo-nidan	ガ	逃ぐ	に	にげ	にげ	にぐ	にぐる	にぐれ	にげ
+shimo-nidan	ヤ	越ゆ	こ	こえ	こえ	こゆ	こゆる	こゆれ	こえ
+shimo-nidan	ヤ	絶ゆ	た	たえ	たえ	たゆ	たゆる	たゆれ	たえ
+shimo-nidan	ハ	経	（へ）	へ	へ	ふ	ふる	ふれ	へ
+shimo-nidan	ナ	寝	（ね）	ね	ね	ぬ	ぬる	ぬれ	ね
+shimo-nidan	マ	始む	はじ	はじめ	はじめ	はじむ	はじむる	はじむれ	はじめ
+shimo-nidan	マ	定む	さだ	さだめ	さだめ	さだむ	さだむる	さだむれ	さだめ
+shimo-nidan	ダ	奏づ	かな	かなで	かなで	かなづ	かなづる	かなづれ	かなで
+shimo-nidan	マ	慰む	なぐさ	なぐさめ	なぐさめ	なぐさむ	なぐさむる	なぐさむれ	なぐさめ
+shimo-nidan	ガ	遂ぐ	と	とげ	とげ	とぐ	とぐる	とぐれ	とげ
+shimo-nidan	サ	見す	み	みせ	みせ	みす	みする	みすれ	みせ
+Kami-Ichidan	カ	着る	き	き	き	きる	きる	きれ	き
+Kami-Ichidan	ナ	似る	に	に	に	にる	にる	にれ	に
+Kami-Ichidan	ハ	干る	ひ	ひ	ひ	ひる	ひる	ひれ	ひ
+Kami-Ichidan	マ	見る	み	み	み	みる	みる	みれ	み
+Kami-Ichidan	ヤ	射る	い	い	い	いる	いる	いれ	い
+Kami-Ichidan	ワ	居る	ゐ	ゐ	ゐ	ゐる	ゐる	ゐれ	ゐ
+Kami-Ichidan	ワ	率る	ゐ	ゐ	ゐ	ゐる	ゐる	ゐれ	ゐ
+Kami-Ichidan	ナ	煮る	に	に	に	にる	にる	にれ	に
+Kami-Ichidan	ヤ	鋳る	い	い	い	いる	いる	いれ	い
+Kami-Nidan	カ	起く	お	おき	おき	おく	おくる	おくれ	おき
+Kami-Nidan	ガ	過ぐ	す	すぎ	すぎ	すぐ	すぐる	すぐれ	すぎ
+Kami-Nidan	タ	朽つ	く	くち	くち	くつ	くつる	くつれ	くち
+Kami-Nidan	ダ	恥づ	は	はぢ	はぢ	はづ	はづる	はづれ	はぢ
+Kami-Nidan	ハ	強ふ	し	しひ	しひ	しふ	しふる	しふれ	しひ
+Kami-Nidan	バ	伸ぶ	の	のび	のび	のぶ	のぶる	のぶれ	のび
+Kami-Nidan	マ	恨む	うら	うらみ	うらみ	うらむ	うらむる	うらむれ	うらみ
+Kami-Nidan	ヤ	悔ゆ	く	くい	くい	くゆ	くゆる	くゆれ	くい
+Kami-Nidan	ラ	下る	お	おり	おり	おる	おるる	おるれ	おり
+Kami-Nidan	タ	落つ	お	おち	おち	おつ	おつる	おつれ	おち
+Kami-Nidan	ハ	恋ふ	こ	こひ	こひ	こふ	こふる	こふれ	こひ
+Kami-Nidan	バ	侘ぶ	わ	わび	わび	わぶ	わぶる	わぶれ	わび
+Kami-Nidan	バ	寂ぶ	さ	さび	さび	さぶ	さぶる	さぶれ	さび
+Kami-Nidan	ダ	閉づ	と	とぢ	とぢ	とづ	とづる	とづれ	とぢ
+Kami-Nidan	ヤ	老ゆ	お	おい	おい	おゆ	おゆる	おゆれ	おい
+Kami-Nidan	ヤ	報ゆ	むく	むくい	むくい	むくゆ	むくゆる	むくゆれ	むくい
+Kami-Nidan	カ	生く	い	いき	いき	いく	いくる	いくれ	いき
+Kami-Nidan	バ	滅ぶ	ほろ	ほろび	ほろび	ほろぶ	ほろぶる	ほろぶれ	ほろび
+Kami-Nidan	バ	帯ぶ	お	おび	おび	おぶ	おぶる	おぶれ	おび
+Kami-Nidan	マ	試む	こころ	こころみ	こころみ	こころむ	こころむる	こころむれ	こころみ
+Rahen	ラ	有り	あ	あら	あり	あり	ある	あれ	あれ
+Rahen	ラ	居り	を	をら	をり	をり	をる	をれ	をれ
+Rahen	ラ	侍り	はべ	はべら	はべり	はべり	はべる	はべれ	はべれ
+Rahen	ラ	いまそかり	いまそか	いまそから	いまそかり	いまそかり	いまそかる	いまそかれ	いまそかれ
+Nahen	ナ	死ぬ	し	しな	しに	しぬ	しぬる	しぬれ	しね
+Nahen	ナ	去ぬ	い	いな	いに	いぬ	いぬる	いぬれ	いね
+Kahen	カ	来	（く）	こ	き	く	くる	くれ	こ
+Sahen	サ	す	（す）	せ	し	す	する	すれ	せ
+Sahen	サ	おはす	おは	おはせ	おはし	おはす	おはする	おはすれ	おはせ
+Sahen	サ	念ず	ねん	ねんぜ	ねんじ	ねんず	ねんずる	ねんずれ	ねんぜ
+Sahen	サ	具す	ぐ	ぐせ	ぐし	ぐす	ぐする	ぐすれ	ぐse
+Sahen	サ	奏す	そう	そうせ	そうし	そうす	そうする	そうすれ	そうせ`;
+
+const AUX_DATA = `Aux Verbs	Functions	MZ	RY	SS	RT	IZ	MR	Conjugation Type	Follows
+る	"Spontaneuous, potential, passive, honorific"	れ	れ	る	るる	るれ	れよ	Shimo-Nidan	MZ of YD, NH, RH verbs
+らる	"Spontaneuous, potential, passive, honorific"	られ	られ	らる	らるる	らるれ	られよ	Shimo-Nidan	MZ of verbs other than above
+す	"Causative, honorific"	せ	せ	す	する	すれ	せよ	Shimo-Nidan	MZ of YD, NH, RH verbs
+さす	"Causative, honorific"	させ	させ	さす	さする	さすれ	させよ	Shimo-Nidan	MZ of verbs other than above
+しむ	"Causative, honorific"	しめ	しめ	しむ	しむる	しむれ	しめよ	Shimo-Nidan	MZ
+つ	"Perfective, certainty, parallel"	て	て	つ	つる	つれ	てよ	Shimo-Nidan	RY
+ぬ	"Perfective, certainty, parallel"	な	に	ぬ	ぬる	ぬれ	ね	Nahen	RY
+たり	"Resultative, continuative, perfective, parallel"	たら	たり	たり	たる	たれ	たれ	Rahen	RY
+り	"Resultative, certainty, perfective"	ら	り	り	る	れ	れ	Rahen	IZ of YD, MZ of SH
+き	Personal Past	（せ）	（O）	き	し	しか	（O）	Special	RY (Special after KH and SH)
+けり	"Hearsay past, exclamatory recog, direct past"	（けら）	（O）	けり	ける	けれ	（O）	Rahen	RY
+む	"Speculation, intention, appropriateness, urging, circumlocution, hypothetical"	（ま）	（O）	む	む	め	（O）	Yodan	MZ
+むず	"Intention, speculation"	（O）	（O）	むず	むずる	むずれ	（O）	Sahen	MZ
+らむ	"Present speculation, causal speculation, hearsay, circumlocution"	（O）	（O）	らむ	らむ	らめ	（O）	Yodan	SS( RT of RH)
+けむ	"Speculative past, causal conjecture, past hearsay"	けま	（O）	けむ	けむ	けめ	（O）	Yodan	RY
+めり	"Visual Supposition, circumlocution"	（O）	めり	めり	める	めれ	（O）	Rahen	SS( RT of RH)
+べし	"Conjecture with confidance, strong intention, appropriateness, advice, command, potential"	（O）	べく	べし	べき	べけれ	（O）	Ku Adj	SS( RT of RH)
+らし	Evidential Supposition	（O）	（O）	らし	らし	らし	（O）	Special	SS( RT of RH)
+まし	"Counterfactual speculation, desire, hesitation"	ませ/ましか	（O）	まし	まし	ましか	（O）	Special	MZ
+なり	"Hearsay, aural supposition, direct hearing"	（O）	なり	なり	なる	なれ	（O）	Rahen	SS( RT of RH)
+ず	Negation	（な）	（に）	（O）	ぬ	ね	（O）	Special	MZ
+ず (Zari)	Negation	ざら	ざり	（O）	ざる	ざれ	ざれ	Special	MZ
+じ	"negative speculation, negative intention"	（O）	じ	じ	じ	（O）	（O）	Special	MZ
+まじ	"Negative speculation, negative intention, inappropriateness, prohibition"	（O）	まじく	まじ	まじき	まじけれ	（O）	Shiku-Adj	SS ( RT of RH)
+まほし	"Desire"	（O）	まほしく	まほし	まほしき	まほしけれ	（O）	Shiku-Adj	MZ
+たし	"Desire"	（O）	たく	たし	たき	たけれ	（O）	Ku-Adj	RY
+ナリ	"Copular, Location"	なら	なり	なり	なる	なれ	なれ	Nari-Adj-V	RT, Nominals
+タリ	"Copula"	たら	たり	たり	たる	たれ	たれ	Tari-Adj-V	Nominals
+ごとし	"Comparison, Example"	（O）	ごとく	ごとし	ごとき	（O）	（O）	Ku-Adj	RT, Nominals
+ゆ	"Passive, potential, spontaneous"	え	え	ゆ	ゆる	ゆれ	（O）	Shimo-Nidan	MZ of YD, NH, RH
+ふ	"Repeated action"	は	ひ	ふ	ふ	へ	（O）	Yodan	MZ of YD`;
+
+const ADJ_DATA = `Conjugation	Example	Stem	MZ	RY	SS	RT	IZ	MR
+Ku Adj	清し	きよ	（O）	きよく	きよし	きよき	きよけれ	（O）
+Ku Adj (Kari)	清し	きよ	きよから	きよかり	（O）	きよかる	（O）	きよかれ
+Shiku Adj	美し	うつく	（O）	うつくしく	うつくし	うつくしき	うつくしけれ	（O）
+Shiku Adj (Kari)	美し	うつく	うつくしから	うつくしかり	（O）	うつくしかる	（O）	うつくしかれ
+Nari Adj V	静かなり	しづか	しづかなら	しづかなり	しづかなり	しづかなる	しづかなれ	しづかなれ
+Tari Adj V	堂々たり	だうだう	どうどうたら	どうどうたり	どうどうたり	どうどうたる	どうどうたれ	どうどうたれ`;
+
+$(document).ready(function() {
+    const commonConfig = { delimiter: "\t", header: true, skipEmptyLines: true };
+
+    const verbTbl = $('#verbTable').DataTable({ 
+        data: Papa.parse(VERB_DATA.trim(), commonConfig).data, 
+        columns: [
+            { data: "Conjugation" }, { data: "Row" }, { data: "verb" }, { data: "stem" },
+            { data: "MZ" }, { data: "RY" }, { data: "SS" }, { data: "RT" }, { data: "IZ" }, { data: "MR" }
+        ],
+        pageLength: 15
+    });
+
+    const auxTbl = $('#auxTable').DataTable({ 
+        data: Papa.parse(AUX_DATA.trim(), commonConfig).data, 
+        columns: [
+            { data: "Aux Verbs" }, { data: "Functions" }, { data: "MZ" }, { data: "RY" }, { data: "SS" },
+            { data: "RT" }, { data: "IZ" }, { data: "MR" }, { data: "Conjugation Type" }, { data: "Follows" }
+        ],
+        pageLength: 20
+    });
+
+    const adjTbl = $('#adjTable').DataTable({ 
+        data: Papa.parse(ADJ_DATA.trim(), commonConfig).data, 
+        columns: [
+            { data: "Conjugation" }, { data: "Example" }, { data: "Stem" }, { data: "MZ" }, { data: "RY" },
+            { data: "SS" }, { data: "RT" }, { data: "IZ" }, { data: "MR" }
+        ],
+        pageLength: 10
+    });
+
+    // MASTER SEARCH LOGIC
+    $('#masterSearch').on('keyup', function() {
+        const val = this.value;
+        verbTbl.search(val).draw();
+        auxTbl.search(val).draw();
+        adjTbl.search(val).draw();
+    });
+});
+
+function toggleDarkMode() {
+    document.body.classList.toggle('dark-mode');
+}
+</script>
+
+</body>
+</html>
